@@ -10,21 +10,22 @@ All coordinates use a fovea-centered retinal coordinate system
 (right eye, fundus view): x+ = nasal, y+ = superior, units = μm.
 """
 
-import numpy as np
-from dataclasses import dataclass, field
-from typing import List, Tuple, Optional, Dict
-from enum import Enum
 import logging
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Dict, List, Optional, Tuple
+
+import numpy as np
 
 from .constants import (
+    ARGUS_II_COLS,
+    ARGUS_II_RADIUS_UM,
+    ARGUS_II_ROWS,
+    ARGUS_II_SPACING_UM,
     DEG_TO_UM,
     JANSONIUS_OD_X_DEG,
     JANSONIUS_OD_Y_DEG,
     OD_RIM_RADIUS_DEG,
-    ARGUS_II_ROWS,
-    ARGUS_II_COLS,
-    ARGUS_II_SPACING_UM,
-    ARGUS_II_RADIUS_UM,
 )
 
 logger = logging.getLogger(__name__)
@@ -567,7 +568,7 @@ class AxonMapModel:
             # Then sum along segments → (n_cells,)
             S[:, ei] = np.sum(radial * self._axonal_weight, axis=1)
 
-        logger.info(f"  Sensitivity matrix complete.")
+        logger.info("  Sensitivity matrix complete.")
         return S
 
     def simulate(
@@ -879,9 +880,10 @@ def render_axon_map(
     """
     import matplotlib
     matplotlib.use('Agg')
+    import io
+
     import matplotlib.pyplot as plt
     from matplotlib.patches import Circle, Ellipse
-    import io
 
     fig, ax = plt.subplots(1, 1, figsize=figsize, facecolor='#111111')
     ax.set_facecolor('#111111')

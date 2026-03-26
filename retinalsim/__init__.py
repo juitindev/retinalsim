@@ -27,20 +27,19 @@ from .axon_map import (
     Electrode,
     EncodingStrategy,
     GanglionCell,
+    compute_ssim,
+    encode_image,
+    generate_axon_bundles,
+    generate_test_images,
     make_argus_ii,
     make_prima,
-    encode_image,
-    generate_test_images,
-    compute_ssim,
     render_axon_map,
-    generate_axon_bundles,
 )
-
 from .constants import (
+    BEYELER_SUBJECTS,
     DEG_TO_UM,
     JANSONIUS_OD_X_DEG,
     JANSONIUS_OD_Y_DEG,
-    BEYELER_SUBJECTS,
 )
 
 __all__ = [

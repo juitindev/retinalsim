@@ -18,35 +18,34 @@ import numpy as np
 import pytest
 
 from retinalsim import (
-    AxonMapModel,
-    Electrode,
-    EncodingStrategy,
-    make_argus_ii,
-    make_prima,
-    encode_image,
-    generate_test_images,
-    compute_ssim,
-    generate_axon_bundles,
+    BEYELER_SUBJECTS,
     DEG_TO_UM,
     JANSONIUS_OD_X_DEG,
     JANSONIUS_OD_Y_DEG,
-    BEYELER_SUBJECTS,
+    AxonMapModel,
+    Electrode,
+    EncodingStrategy,
+    compute_ssim,
+    encode_image,
+    generate_axon_bundles,
+    generate_test_images,
+    make_argus_ii,
+    make_prima,
 )
 from retinalsim.axon_map import (
     _fovea_to_jansonius_polar,
-    _jansonius_polar_to_fovea,
     _jansonius_b,
     _jansonius_c,
+    _jansonius_polar_to_fovea,
     _trace_single_axon,
 )
 from retinalsim.constants import (
-    OD_RIM_RADIUS_DEG,
-    ARGUS_II_ROWS,
     ARGUS_II_COLS,
     ARGUS_II_N_ELECTRODES,
+    ARGUS_II_ROWS,
     ARGUS_II_SPACING_UM,
+    OD_RIM_RADIUS_DEG,
 )
-
 
 # ═══════════════════════════════════════════════════════════════
 # Constants

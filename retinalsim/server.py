@@ -15,22 +15,26 @@ Or with uvicorn:
   uvicorn retinalsim.server:app --host 0.0.0.0 --port 8000
 """
 
-import io
 import base64
-import time
+import io
 import logging
+import time
 from typing import Optional
 
+import cv2
 import numpy as np
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import cv2
 
 from .axon_map import (
-    AxonMapModel, Electrode, EncodingStrategy,
-    make_argus_ii, make_prima,
-    encode_image, generate_test_images, compute_ssim,
+    AxonMapModel,
+    EncodingStrategy,
+    compute_ssim,
+    encode_image,
+    generate_test_images,
+    make_argus_ii,
+    make_prima,
     render_axon_map,
 )
 
