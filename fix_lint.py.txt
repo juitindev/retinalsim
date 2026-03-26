@@ -1,0 +1,48 @@
+import re
+
+# Fix server.py
+with open("retinalsim/server.py", encoding="utf-8") as f:
+    s = f.read()
+
+s = s.replace("import gc; gc.collect()", "import gc\n        gc.collect()")
+
+s = s.replace(
+    "electrodes = (make_prima(center_x=req.array_x, center_y=req.array_y, rotation_deg=req.array_rotation)",
+    "electrodes = (\n        make_prima(\n            center_x=req.array_x, center_y=req.array_y,\n            rotation_deg=req.array_rotation,\n        )"
+)
+s = s.replace(
+    "else make_argus_ii(center_x=req.array_x, center_y=req.array_y, rotation_deg=req.array_rotation))",
+    "else make_argus_ii(\n            center_x=req.array_x, center_y=req.array_y,\n            rotation_deg=req.array_rotation,\n        )\n    )"
+)
+s = s.replace(
+    "electrodes = (make_prima(center_x=array_x, center_y=array_y, rotation_deg=array_rotation)",
+    "electrodes = (\n        make_prima(\n            center_x=array_x, center_y=array_y,\n            rotation_deg=array_rotation,\n        )"
+)
+s = s.replace(
+    "else make_argus_ii(center_x=array_x, center_y=array_y, rotation_deg=array_rotation))",
+    "else make_argus_ii(\n            center_x=array_x, center_y=array_y,\n            rotation_deg=array_rotation,\n        )\n    )"
+)
+
+# Fix long HTTPException - use a unique marker to find it
+old_http = 'raise HTTPException(400, f"Electrode index {req.electrode_index} out of range (max {len(electrodes)-1})")'
+new_http = ('raise HTTPException(\n'
+            '            400,\n'
+            '            f"Electrode index {req.electrode_index} "\n'
+            '            f"out of range (max {len(electrodes)-1})",\n'
+            '        )')
+s = s.replace(old_http, new_http)
+
+with open("retinalsim/server.py", "w", encoding="utf-8") as f:
+    f.write(s)
+print("server.py fixed")
+
+# Fix tests - add render_axon_map import
+with open("tests/test_retinalsim.py", encoding="utf-8") as f:
+    t = f.read()
+t = t.replace(
+    "    generate_axon_bundles,\n    DEG_TO_UM,",
+    "    generate_axon_bundles,\n    render_axon_map,\n    DEG_TO_UM,"
+)
+with open("tests/test_retinalsim.py", "w", encoding="utf-8") as f:
+    f.write(t)
+print("tests fixed")
