@@ -1,0 +1,86 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "retinalsim"
+version = "0.1.0"
+description = "Retinal prosthesis simulator based on the Beyeler (2019) axon map model"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Juit", email = "jt@retinalsim.com"},
+]
+keywords = [
+    "retinal prosthesis",
+    "bionic eye",
+    "axon map model",
+    "prosthetic vision",
+    "phosphene simulation",
+    "Argus II",
+    "epiretinal implant",
+    "visual neuroprosthesis",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = [
+    "numpy>=1.21",
+    "opencv-python-headless>=4.5",
+    "matplotlib>=3.5",
+]
+
+[project.optional-dependencies]
+server = [
+    "fastapi>=0.100",
+    "uvicorn>=0.20",
+    "python-multipart>=0.0.5",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.1.0",
+]
+docs = [
+    "sphinx>=7.0",
+    "sphinx-rtd-theme>=1.0",
+    "numpydoc>=1.5",
+]
+
+[project.urls]
+Homepage = "https://retinalsim.com"
+Documentation = "https://github.com/juit/retinalsim#readme"
+Repository = "https://github.com/juit/retinalsim"
+Issues = "https://github.com/juit/retinalsim/issues"
+
+[tool.setuptools.packages.find]
+include = ["retinalsim*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.coverage.run]
+source = ["retinalsim"]
+omit = ["retinalsim/server.py"]
+
+[tool.coverage.report]
+show_missing = true

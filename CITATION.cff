@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "RetinalSim"
+version: 0.1.0
+date-released: "2026-03-24"
+license: MIT
+url: "https://retinalsim.com"
+repository-code: "https://github.com/juit/retinalsim"
+abstract: >-
+  An open-source retinal prosthesis simulator implementing the
+  Beyeler (2019) axon map model for predicting phosphene shapes
+  in epiretinal implant recipients.
+keywords:
+  - retinal prosthesis
+  - bionic eye
+  - axon map model
+  - prosthetic vision
+  - phosphene simulation
+authors:
+  - family-names: "Juit"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+references:
+  - type: article
+    authors:
+      - family-names: "Beyeler"
+        given-names: "Michael"
+      - family-names: "Boynton"
+        given-names: "Geoffrey M."
+      - family-names: "Fine"
+        given-names: "Ione"
+      - family-names: "Rokem"
+        given-names: "Ariel"
+    title: "Model of Ganglion Axon Pathways Accounts for Percepts Elicited by Retinal Implants"
+    journal: "Scientific Reports"
+    volume: 9
+    start: 9199
+    year: 2019
+    doi: "10.1038/s41598-019-45416-4"

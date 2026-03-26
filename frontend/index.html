@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retinal Prosthesis Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e14;
+  --bg2: #111820;
+  --bg3: #1a2230;
+  --border: #2a3545;
+  --text: #c8d0dc;
+  --text-dim: #6b7a8d;
+  --accent: #00d4aa;
+  --accent-dim: #00d4aa33;
+  --warn: #f0883e;
+  --red: #f85149;
+  --blue: #58a6ff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+header {
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+header h1 {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+header h1 span {
+  color: var(--accent);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  background: var(--accent-dim);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  transition: background 0.3s;
+}
+.status-dot.connected { background: var(--accent); }
+
+.status-text {
+  font-size: 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--text-dim);
+}
+
+/* ── Main Layout ── */
+.app {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  height: calc(100vh - 53px);
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.panel-title {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+/* ── Slider controls ── */
+.control {
+  margin-bottom: 14px;
+}
+
+.control-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.control label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.control .value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+}
+
+/* ── Select ── */
+select {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+}
+
+select:focus { border-color: var(--accent); }
+
+/* ── Buttons ── */
+.btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+}
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--text-dim); }
+.btn-outline.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ── Test pattern grid ── */
+.pattern-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.pattern-btn {
+  padding: 7px;
+  font-size: 12px;
+  border-radius: 5px;
+}
+
+/* ── Upload ── */
+.upload-zone {
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.upload-zone:hover { border-color: var(--accent); color: var(--text); }
+
+/* ── Main Content ── */
+.content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* ── Image comparison ── */
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.image-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.image-card-header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.image-card-header h3 {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.image-card-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  min-height: 300px;
+  position: relative;
+  overflow: hidden;
+}
+
+.image-card-body img {
+  max-width: 100%;
+  max-height: calc(100vh - 200px);
+  object-fit: contain;
+  image-rendering: pixelated;
+  border-radius: 4px;
+}
+
+.placeholder {
+  color: var(--text-dim);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ── Stats bar ── */
+.stats-bar {
+  display: flex;
+  gap: 24px;
+  padding: 12px 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+.stat-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+/* ── Loading ── */
+.spinner {
+  width: 28px; height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 14, 20, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+  .comparison { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Retinal Prosthesis Simulator <span>v0.1</span></h1>
+  <div style="flex:1"></div>
+  <div class="status-dot" id="statusDot"></div>
+  <div class="status-text" id="statusText">checking...</div>
+</header>
+
+<div class="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+
+    <!-- Input Source -->
+    <div class="panel">
+      <div class="panel-title">Input source</div>
+      <div class="pattern-grid" id="patternGrid"></div>
+      <div style="margin: 8px 0; text-align: center; font-size: 11px; color: var(--text-dim)">or</div>
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+        Click to upload image
+      </div>
+      <input type="file" id="fileInput" accept="image/*" style="display:none">
+    </div>
+
+    <!-- Model Parameters -->
+    <div class="panel">
+      <div class="panel-title">Model parameters</div>
+
+      <div class="control">
+        <div class="control-header">
+          <label>ρ (rho)</label>
+          <span class="value" id="rhoVal">200 μm</span>
+        </div>
+        <input type="range" id="rhoSlider" min="50" max="600" value="200" step="10">
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label>λ (lambda)</label>
+          <span class="value" id="lambdaVal">800 μm</span>
+        </div>
+        <input type="range" id="lambdaSlider" min="100" max="2000" value="800" step="50">
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label>Current</label>
+          <span class="value" id="currentVal">1.0</span>
+        </div>
+        <input type="range" id="currentSlider" min="0.1" max="1.0" value="1.0" step="0.05">
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label>Encoding</label>
+        </div>
+        <select id="encodingSelect">
+          <option value="direct">Direct</option>
+          <option value="edge">Edge detection</option>
+          <option value="contrast">Local contrast (CLAHE)</option>
+          <option value="saliency">Saliency (gradient)</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label>Array</label>
+        </div>
+        <select id="arraySelect">
+          <option value="argus_ii">Argus II (6×10, 60ch)</option>
+          <option value="prima">PRIMA (hex, 378ch)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Array Placement -->
+    <div class="panel">
+      <div class="panel-title">Implant placement</div>
+
+      <div class="control">
+        <div class="control-header">
+          <label>X offset</label>
+          <span class="value" id="arrayXVal">-1000 μm</span>
+        </div>
+        <input type="range" id="arrayXSlider" min="-3000" max="1000" value="-1000" step="100">
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label>Y offset</label>
+          <span class="value" id="arrayYVal">0 μm</span>
+        </div>
+        <input type="range" id="arrayYSlider" min="-2000" max="2000" value="0" step="100">
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label>Rotation</label>
+          <span class="value" id="arrayRotVal">-25°</span>
+        </div>
+        <input type="range" id="arrayRotSlider" min="-90" max="90" value="-25" step="5">
+      </div>
+
+      <div style="font-size:11px; color:var(--text-dim); margin-top:6px">
+        Beyeler 2019 presets:
+      </div>
+      <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap">
+        <button class="btn btn-outline" style="width:auto;padding:5px 10px;font-size:11px" onclick="loadPreset('S2')">S2 <span style="color:var(--text-dim);font-size:10px">ρ315 λ500</span></button>
+        <button class="btn btn-outline" style="width:auto;padding:5px 10px;font-size:11px" onclick="loadPreset('S3')">S3 <span style="color:var(--text-dim);font-size:10px">ρ144 λ1414</span></button>
+        <button class="btn btn-outline" style="width:auto;padding:5px 10px;font-size:11px" onclick="loadPreset('S4')">S4 <span style="color:var(--text-dim);font-size:10px">ρ437 λ1420</span></button>
+        <button class="btn btn-outline" style="width:auto;padding:5px 10px;font-size:11px" onclick="loadPreset('default')">Reset</button>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <button class="btn btn-primary" id="simulateBtn" disabled>
+      Simulate
+    </button>
+
+    <!-- Single Electrode Diagnostic -->
+    <div class="panel">
+      <div class="panel-title">Single electrode (Beyeler validation)</div>
+      <div style="font-size:11px; color:var(--text-dim); margin-bottom:8px">
+        Click an electrode to see its phosphene shape.
+        Uses current ρ, λ, and array placement.
+      </div>
+      <div id="electrodeGrid" style="display:grid; grid-template-columns:repeat(10,1fr); gap:2px;"></div>
+      <div id="phospheneInfo" style="font-size:11px; color:var(--text-dim); margin-top:6px"></div>
+    </div>
+
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <div class="comparison">
+      <!-- Axon Map -->
+      <div class="image-card">
+        <div class="image-card-header">
+          <h3>Retinal axon map</h3>
+          <span class="stat-label" id="axonMapInfo"></span>
+        </div>
+        <div class="image-card-body" id="axonMapArea" style="min-height:250px">
+          <div class="placeholder">Run simulation to see axon map</div>
+        </div>
+      </div>
+
+      <!-- Input Image -->
+      <div class="image-card">
+        <div class="image-card-header">
+          <h3>Input image</h3>
+          <span class="stat-label" id="inputInfo"></span>
+        </div>
+        <div class="image-card-body" id="inputArea" style="min-height:250px">
+          <div class="placeholder">Select a test pattern or upload an image</div>
+        </div>
+      </div>
+
+      <!-- Simulated Percept -->
+      <div class="image-card">
+        <div class="image-card-header">
+          <h3>Simulated prosthetic vision</h3>
+          <span class="stat-label" id="perceptInfo"></span>
+        </div>
+        <div class="image-card-body" id="perceptArea" style="min-height:250px">
+          <div class="placeholder">Run simulation to see result</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-label">SSIM</span>
+        <span class="stat-value" id="ssimVal">—</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Time</span>
+        <span class="stat-value" id="timeVal">—</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Grid</span>
+        <span class="stat-value" id="gridVal">—</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">ρ</span>
+        <span class="stat-value" id="rhoStat">—</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">λ</span>
+        <span class="stat-value" id="lambdaStat">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:8000'  // local dev
+  : '';                       // production: same origin via nginx proxy
+
+// ── State ──
+let selectedPattern = null;
+let uploadedFile = null;
+let isSimulating = false;
+let uploadHistory = [];  // {name, file, dataUrl}
+
+// ── DOM refs ──
+const $ = id => document.getElementById(id);
+const statusDot = $('statusDot');
+const statusText = $('statusText');
+const simulateBtn = $('simulateBtn');
+const inputArea = $('inputArea');
+const perceptArea = $('perceptArea');
+const axonMapArea = $('axonMapArea');
+
+// ── Check server ──
+async function checkServer() {
+  try {
+    const healthUrl = API ? API + '/' : '/api/health';
+    const res = await fetch(healthUrl);
+    if (res.ok) {
+      statusDot.classList.add('connected');
+      statusText.textContent = window.location.host;
+      return true;
+    }
+  } catch(e) {}
+  statusDot.classList.remove('connected');
+  statusText.textContent = 'server offline';
+  return false;
+}
+
+// ── Test patterns ──
+async function loadPatterns() {
+  try {
+    const res = await fetch(API + '/test_patterns');
+    const data = await res.json();
+    const grid = $('patternGrid');
+    data.patterns.forEach(name => {
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-outline pattern-btn';
+      btn.textContent = name.replace('_', ' ');
+      btn.onclick = () => selectPattern(name, btn);
+      grid.appendChild(btn);
+    });
+  } catch(e) {
+    $('patternGrid').innerHTML = '<span style="font-size:12px;color:var(--text-dim)">Server not available</span>';
+  }
+}
+
+function selectPattern(name, btn) {
+  selectedPattern = name;
+  uploadedFile = null;
+  $('fileInput').value = '';  // Reset so same file can be re-uploaded
+
+  // Highlight button
+  document.querySelectorAll('.pattern-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.history-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Fetch and show preview image
+  $('inputInfo').textContent = name;
+  $('uploadZone').textContent = 'Click to upload image';
+  simulateBtn.disabled = false;
+
+  inputArea.innerHTML = `<div class="loading-overlay"><div class="spinner"></div><span>Loading preview...</span></div>`;
+  fetch(API + '/preview_pattern/' + name)
+    .then(res => res.json())
+    .then(data => {
+      inputArea.innerHTML = `<img src="data:image/png;base64,${data.image_base64}" alt="${name}">`;
+    })
+    .catch(() => {
+      inputArea.innerHTML = `<div class="placeholder" style="color:var(--accent)">Pattern: ${name}</div>`;
+    });
+}
+
+// ── File upload ──
+$('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  selectUploadedFile(file);
+});
+
+function selectUploadedFile(file) {
+  uploadedFile = file;
+  selectedPattern = null;
+
+  document.querySelectorAll('.pattern-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.history-btn').forEach(b => b.classList.remove('active'));
+
+  // Preview
+  const reader = new FileReader();
+  reader.onload = ev => {
+    inputArea.innerHTML = `<img src="${ev.target.result}" alt="Uploaded">`;
+    $('inputInfo').textContent = file.name;
+
+    // Add to history (avoid duplicates by name)
+    if (!uploadHistory.find(h => h.name === file.name)) {
+      uploadHistory.push({ name: file.name, file: file, dataUrl: ev.target.result });
+      if (uploadHistory.length > 8) uploadHistory.shift();  // keep max 8
+      renderUploadHistory();
+    }
+    // Highlight current in history
+    document.querySelectorAll('.history-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.name === file.name);
+    });
+  };
+  reader.readAsDataURL(file);
+
+  $('uploadZone').textContent = file.name;
+  $('fileInput').value = '';  // Reset so same file triggers change again
+  simulateBtn.disabled = false;
+}
+
+function renderUploadHistory() {
+  let container = $('uploadHistory');
+  if (!container) {
+    // Create history container after upload zone
+    container = document.createElement('div');
+    container.id = 'uploadHistory';
+    container.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px;margin-top:8px';
+    $('uploadZone').parentNode.appendChild(container);
+  }
+  container.innerHTML = '';
+  uploadHistory.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-outline history-btn';
+    btn.dataset.name = item.name;
+    btn.style.cssText = 'padding:3px 6px;font-size:10px;width:auto;display:flex;align-items:center;gap:4px';
+    btn.innerHTML = `<img src="${item.dataUrl}" style="width:20px;height:20px;object-fit:cover;border-radius:2px"> ${item.name.length > 10 ? item.name.slice(0,10)+'…' : item.name}`;
+    btn.onclick = () => selectUploadedFile(item.file);
+    container.appendChild(btn);
+  });
+}
+
+// ── Slider updates ──
+$('rhoSlider').oninput = e => $('rhoVal').textContent = e.target.value + ' μm';
+$('lambdaSlider').oninput = e => $('lambdaVal').textContent = e.target.value + ' μm';
+$('currentSlider').oninput = e => $('currentVal').textContent = parseFloat(e.target.value).toFixed(2);
+$('arrayXSlider').oninput = e => $('arrayXVal').textContent = e.target.value + ' μm';
+$('arrayYSlider').oninput = e => $('arrayYVal').textContent = e.target.value + ' μm';
+$('arrayRotSlider').oninput = e => $('arrayRotVal').textContent = e.target.value + '°';
+
+// ── Subject presets (Beyeler 2019 Table 2+3, rounded to slider steps) ──
+const PRESETS = {
+  S2: { rho: 320, lambda: 500, x: -1300, y: -900, rot: -30 },
+  S3: { rho: 140, lambda: 1400, x: -2100, y: 100, rot: -55 },
+  S4: { rho: 440, lambda: 1400, x: -1800, y: 400, rot: -20 },
+  default: { rho: 200, lambda: 800, x: -1000, y: 0, rot: -25 },
+};
+
+function loadPreset(name) {
+  const p = PRESETS[name];
+  if (!p) return;
+
+  function setSlider(id, valId, value, suffix) {
+    $(id).value = value;
+    $(valId).textContent = value + suffix;
+  }
+
+  setSlider('rhoSlider', 'rhoVal', p.rho, ' μm');
+  setSlider('lambdaSlider', 'lambdaVal', p.lambda, ' μm');
+  setSlider('arrayXSlider', 'arrayXVal', p.x, ' μm');
+  setSlider('arrayYSlider', 'arrayYVal', p.y, ' μm');
+  setSlider('arrayRotSlider', 'arrayRotVal', p.rot, '°');
+}
+
+// ── Simulate ──
+simulateBtn.onclick = async () => {
+  if (isSimulating) return;
+  if (!selectedPattern && !uploadedFile) return;
+
+  isSimulating = true;
+  simulateBtn.disabled = true;
+  simulateBtn.textContent = 'Simulating...';
+
+  // Loading overlay
+  perceptArea.innerHTML = `
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+      <span>Building model & computing sensitivity...</span>
+      <span style="font-size:11px">First run takes ~15s</span>
+    </div>`;
+  axonMapArea.innerHTML = `
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+      <span>Rendering axon map...</span>
+    </div>`;
+
+  try {
+    let res;
+
+    const params = {
+      rho: parseFloat($('rhoSlider').value),
+      axon_lambda: parseFloat($('lambdaSlider').value),
+      encoding: $('encodingSelect').value,
+      current_amplitude: parseFloat($('currentSlider').value),
+      array_type: $('arraySelect').value,
+      grid_spacing: 80,
+      array_x: parseFloat($('arrayXSlider').value),
+      array_y: parseFloat($('arrayYSlider').value),
+      array_rotation: parseFloat($('arrayRotSlider').value),
+    };
+
+    if (uploadedFile) {
+      // Multipart form with image → /simulate_upload
+      const form = new FormData();
+      form.append('image', uploadedFile);
+      form.append('rho', params.rho);
+      form.append('axon_lambda', params.axon_lambda);
+      form.append('encoding', params.encoding);
+      form.append('current_amplitude', params.current_amplitude);
+      form.append('array_type', params.array_type);
+      form.append('grid_spacing', params.grid_spacing);
+      form.append('array_x', params.array_x);
+      form.append('array_y', params.array_y);
+      form.append('array_rotation', params.array_rotation);
+
+      res = await fetch(API + '/simulate_upload', {
+        method: 'POST',
+        body: form,
+      });
+    } else {
+      // JSON with test pattern → /simulate
+      params.test_pattern = selectedPattern;
+      res = await fetch(API + '/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+    }
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || res.statusText);
+    }
+
+    const data = await res.json();
+
+    // Show axon map
+    axonMapArea.innerHTML = `<img src="data:image/png;base64,${data.axon_map_base64}" alt="Axon Map">`;
+    $('axonMapInfo').textContent = `x:${params.array_x} y:${params.array_y} rot:${params.array_rotation}°`;
+
+    // Show input
+    inputArea.innerHTML = `<img src="data:image/png;base64,${data.input_base64}" alt="Input">`;
+
+    // Show percept
+    perceptArea.innerHTML = `<img src="data:image/png;base64,${data.percept_base64}" alt="Percept">`;
+
+    // Stats
+    $('ssimVal').textContent = data.ssim.toFixed(4);
+    $('timeVal').textContent = data.elapsed_seconds.toFixed(1) + 's';
+    $('gridVal').textContent = data.grid_shape.join(' × ');
+    $('rhoStat').textContent = params.rho + ' μm';
+    $('lambdaStat').textContent = params.axon_lambda + ' μm';
+    $('perceptInfo').textContent = `${params.encoding} encoding`;
+
+  } catch(err) {
+    perceptArea.innerHTML = `<div class="placeholder" style="color:var(--red)">Error: ${err.message}</div>`;
+  } finally {
+    isSimulating = false;
+    simulateBtn.disabled = false;
+    simulateBtn.textContent = 'Simulate';
+  }
+};
+
+// ── Keyboard shortcut ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !simulateBtn.disabled) simulateBtn.click();
+});
+
+// ── Single Electrode Grid ──
+function buildElectrodeGrid() {
+  const grid = $('electrodeGrid');
+  // Argus II: 6 rows × 10 cols = 60 electrodes
+  for (let r = 5; r >= 0; r--) {  // top row = row 5 (superior)
+    for (let c = 0; c < 10; c++) {
+      const idx = r * 10 + c;
+      const btn = document.createElement('button');
+      btn.style.cssText = 'width:100%;aspect-ratio:1;border:1px solid var(--border);border-radius:2px;background:var(--bg);cursor:pointer;font-size:7px;color:var(--text-dim);padding:0';
+      btn.textContent = idx;
+      btn.title = `Electrode ${idx} (row ${r}, col ${c})`;
+      btn.onclick = () => runSinglePhosphene(idx, btn);
+      grid.appendChild(btn);
+    }
+  }
+}
+
+async function runSinglePhosphene(idx, btn) {
+  // Highlight selected electrode
+  document.querySelectorAll('#electrodeGrid button').forEach(b => {
+    b.style.background = 'var(--bg)';
+    b.style.borderColor = 'var(--border)';
+  });
+  btn.style.background = 'var(--accent-dim)';
+  btn.style.borderColor = 'var(--accent)';
+
+  $('phospheneInfo').textContent = `Loading electrode ${idx}...`;
+
+  // Loading overlay
+  perceptArea.innerHTML = `
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+      <span>Computing single phosphene...</span>
+    </div>`;
+  inputArea.innerHTML = `<div class="placeholder" style="color:var(--accent)">Single electrode #${idx}</div>`;
+
+  try {
+    const res = await fetch(API + '/single_phosphene', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        rho: parseFloat($('rhoSlider').value),
+        axon_lambda: parseFloat($('lambdaSlider').value),
+        electrode_index: idx,
+        grid_spacing: 80,
+        array_x: parseFloat($('arrayXSlider').value),
+        array_y: parseFloat($('arrayYSlider').value),
+        array_rotation: parseFloat($('arrayRotSlider').value),
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || res.statusText);
+    }
+
+    const data = await res.json();
+
+    // Show results
+    axonMapArea.innerHTML = `<img src="data:image/png;base64,${data.axon_map_base64}" alt="Axon Map">`;
+    $('axonMapInfo').textContent = `electrode #${idx}`;
+    perceptArea.innerHTML = `<img src="data:image/png;base64,${data.percept_base64}" alt="Phosphene">`;
+    $('perceptInfo').textContent = `single electrode #${idx}`;
+
+    // Stats
+    $('ssimVal').textContent = '—';
+    $('timeVal').textContent = data.elapsed_seconds.toFixed(1) + 's';
+    $('rhoStat').textContent = $('rhoSlider').value + ' μm';
+    $('lambdaStat').textContent = $('lambdaSlider').value + ' μm';
+
+    $('phospheneInfo').innerHTML = `#${idx} at (${Math.round(data.electrode_x)}, ${Math.round(data.electrode_y)}) μm · ${data.elapsed_seconds.toFixed(1)}s`;
+
+  } catch(err) {
+    perceptArea.innerHTML = `<div class="placeholder" style="color:var(--red)">Error: ${err.message}</div>`;
+    $('phospheneInfo').textContent = `Error: ${err.message}`;
+  }
+}
+
+// ── Init ──
+(async () => {
+  await checkServer();
+  await loadPatterns();
+  buildElectrodeGrid();
+  setInterval(checkServer, 10000);
+})();
+</script>
+
+</body>
+</html>
