@@ -8,7 +8,7 @@ tags:
   - prosthetic vision
   - phosphene simulation
 authors:
-  - name: Juit
+  - name: Jui Ting Chang
     orcid: 0009-0009-3091-3656
     affiliation: 1
 affiliations:
