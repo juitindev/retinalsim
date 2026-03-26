@@ -9,7 +9,7 @@ tags:
   - phosphene simulation
 authors:
   - name: Juit
-    orcid: 0000-0000-0000-0000
+    orcid: 0009-0009-3091-3656
     affiliation: 1
 affiliations:
   - name: Independent Researcher
