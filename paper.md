@@ -55,7 +55,7 @@ used as a Python library, as a web API, or through an interactive browser
 interface — making the axon map model accessible to researchers, clinicians,
 and educators without requiring Python expertise.
 
-# Design and implementation
+# Software design
 
 RetinalSim implements the three components of the Beyeler axon map model:
 
@@ -105,7 +105,7 @@ of individual patient outcomes.
 - Axon map visualization showing fiber trajectories and electrode placement
 - Validated against published subject data from @Beyeler2019
 
-# Comparison with pulse2percept
+# State of the field
 
 The reference implementation of the axon map model is available within the
 pulse2percept package [@Beyeler2017]. RetinalSim differs in scope and design:
@@ -138,6 +138,27 @@ hemifield constraint with post-hoc raphe smoothing, while pulse2percept
 uses a different raphe transition strategy. These differences do not
 meaningfully affect the predicted phosphene shapes at clinically relevant
 parameter ranges.
+
+# Research impact statement
+
+RetinalSim enables three categories of research activity: (1) rapid
+prototyping of image encoding strategies for epiretinal prostheses
+without requiring the full pulse2percept dependency stack, (2) classroom
+and clinical education through the interactive web interface, which
+allows non-programmers to explore how implant parameters affect visual
+outcomes, and (3) patient-specific outcome prediction by loading
+individual $\rho$ and $\lambda$ parameters fitted from phosphene drawing data. The
+Docker deployment option allows institutions to host the simulator
+internally for research or teaching without per-user software installation.
+
+# AI usage disclosure
+
+This project was developed with assistance from Claude (Anthropic, Claude
+Opus 4), which was used for code generation, refactoring, test scaffolding,
+documentation drafting, and paper authoring. All AI-assisted outputs were
+reviewed, edited, and validated by the human author, who made all core
+design decisions including model architecture, equation implementation,
+and validation methodology.
 
 # Acknowledgements
 
