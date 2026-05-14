@@ -1,6 +1,6 @@
 # RetinalSim
 
-[![Tests](https://github.com/juit/retinalsim/actions/workflows/tests.yml/badge.svg)](https://github.com/juit/retinalsim/actions/workflows/tests.yml)
+[![Tests](https://github.com/juitindev/retinalsim/actions/workflows/tests.yml/badge.svg)](https://github.com/juitindev/retinalsim/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![JOSS](https://joss.theoj.org/papers/STATUS_BADGE_URL/status.svg)](https://joss.theoj.org/papers/STATUS_BADGE_URL)
 
@@ -32,7 +32,7 @@ pip install retinalsim
 Or from source:
 
 ```bash
-git clone https://github.com/juit/retinalsim.git
+git clone https://github.com/juitindev/retinalsim.git
 cd retinalsim
 pip install -e ".[dev]"
 ```
@@ -198,7 +198,7 @@ If you use RetinalSim in your research, please cite:
 ```bibtex
 @article{retinalsim2026,
   title     = {RetinalSim: An open-source retinal prosthesis simulator based on the axon map model},
-  author    = {Juit},
+  author    = {Chang, Jui Ting},
   journal   = {Journal of Open Source Software},
   year      = {2026},
   doi       = {10.21105/joss.XXXXX},

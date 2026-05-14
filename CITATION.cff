@@ -6,7 +6,7 @@ version: 0.1.0
 date-released: "2026-03-24"
 license: MIT
 url: "https://retinalsim.com"
-repository-code: "https://github.com/juit/retinalsim"
+repository-code: "https://github.com/juitindev/retinalsim"
 abstract: >-
   An open-source retinal prosthesis simulator implementing the
   Beyeler (2019) axon map model for predicting phosphene shapes
