@@ -17,7 +17,7 @@ Example
 >>> model.build()
 >>> electrodes = make_argus_ii(center_x=-1000, rotation_deg=-25)
 >>> electrodes = encode_image(image, electrodes)
->>> percept = model.predict(electrodes)
+>>> percept = model.predict(image, electrodes=electrodes)
 """
 
 __version__ = "0.1.0"

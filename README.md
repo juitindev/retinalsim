@@ -9,8 +9,6 @@ An open-source retinal prosthesis simulator based on the Beyeler (2019) axon map
 
 **Live demo:** [retinalsim.com](http://retinalsim.com)
 
-![RetinalSim screenshot](docs/screenshot.png)
-
 ## Features
 
 - **Axon map model** — full implementation of Beyeler et al. (2019) with Jansonius (2009, 2012) nerve fiber bundle trajectories
@@ -171,7 +169,9 @@ retinalsim/
 │   └── requirements.txt
 ├── examples/
 │   ├── basic_simulation.py
-│   └── beyeler_subjects.py
+│   ├── beyeler_subjects.py
+│   ├── benchmark_vs_p2p.py
+│   └── validation_beyeler.py
 ├── paper.md                 # JOSS paper
 ├── paper.bib                # References
 ├── pyproject.toml           # Package configuration
@@ -197,12 +197,12 @@ RetinalSim uses a fovea-centered retinal coordinate system (right eye, fundus vi
 If you use RetinalSim in your research, please cite:
 
 ```bibtex
-@article{retinalsim2026,
-  title     = {RetinalSim: An open-source retinal prosthesis simulator based on the axon map model},
-  author    = {Chang, Jui Ting},
-  journal   = {Journal of Open Source Software},
-  year      = {2026},
-  doi       = {10.21105/joss.XXXXX},
+@software{retinalsim2026,
+  title  = {RetinalSim: An open-source retinal prosthesis simulator based on the axon map model},
+  author = {Chang, Jui Ting},
+  year   = {2026},
+  url    = {https://github.com/juitindev/retinalsim},
+  note   = {JOSS paper in preparation},
 }
 ```
 
