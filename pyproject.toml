@@ -60,9 +60,9 @@ docs = [
 
 [project.urls]
 Homepage = "https://retinalsim.com"
-Documentation = "https://github.com/juit/retinalsim#readme"
-Repository = "https://github.com/juit/retinalsim"
-Issues = "https://github.com/juit/retinalsim/issues"
+Documentation = "https://github.com/juitindev/retinalsim#readme"
+Repository = "https://github.com/juitindev/retinalsim"
+Issues = "https://github.com/juitindev/retinalsim/issues"
 
 [tool.setuptools.packages.find]
 include = ["retinalsim*"]

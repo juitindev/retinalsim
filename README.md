@@ -2,7 +2,8 @@
 
 [![Tests](https://github.com/juitindev/retinalsim/actions/workflows/tests.yml/badge.svg)](https://github.com/juitindev/retinalsim/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![JOSS](https://joss.theoj.org/papers/STATUS_BADGE_URL/status.svg)](https://joss.theoj.org/papers/STATUS_BADGE_URL)
+
+_JOSS paper in preparation._
 
 An open-source retinal prosthesis simulator based on the Beyeler (2019) axon map model. Predicts the elongated phosphene shapes ("streaks") perceived by patients with epiretinal implants like the Argus II.
 
@@ -26,14 +27,14 @@ An open-source retinal prosthesis simulator based on the Beyeler (2019) axon map
 ### Install
 
 ```bash
-pip install retinalsim
-```
-
-Or from source:
-
-```bash
 git clone https://github.com/juitindev/retinalsim.git
 cd retinalsim
+pip install -e .
+```
+
+For development (tests, linting):
+
+```bash
 pip install -e ".[dev]"
 ```
 
@@ -81,7 +82,7 @@ percept = model.predict(image, electrodes=electrodes)
 
 ```bash
 # Install server dependencies
-pip install retinalsim[server]
+pip install -e ".[server]"
 
 # Run locally
 cd retinalsim
